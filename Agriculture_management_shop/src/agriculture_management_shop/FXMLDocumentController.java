@@ -4,9 +4,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.animation.TranslateTransition;
@@ -14,46 +12,48 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class FXMLDocumentController implements Initializable {
 
     @FXML
     private AnchorPane loginForm;
-    @FXML
-    private TextField username;
-    @FXML
-    private PasswordField pass;
-    @FXML
-    private Hyperlink forgot_pass;
-    @FXML
-    private Button loginBtn;
-    @FXML
-    private AnchorPane signupForm;
-    @FXML
-    private TextField Ruser;
-    @FXML
-    private PasswordField Rpass;
-    @FXML
-    private ComboBox<String> Rquestion;
-    @FXML
-    private TextField Ranswer;
-    @FXML
-    private Button signupBtn;
-    @FXML
-    private AnchorPane side_form;
-    @FXML
-    private Button side_createBtn;
-    @FXML
-    private Button side_alreadyHave;
+    @FXML private TextField username;
+    @FXML private PasswordField pass;
+    @FXML private Button loginBtn;
+    @FXML private TextField Ruser;
+    @FXML private PasswordField Rpass;
+    @FXML private ComboBox<String> Rquestion;
+    @FXML private TextField Ranswer;
+    @FXML private AnchorPane side_form;
+    @FXML private Button side_createBtn;
+    @FXML private Button side_alreadyHave;
+    @FXML private AnchorPane fp_question_form;
+    @FXML private ComboBox<String> fp_question;
+    @FXML private TextField fp_answer;
+    @FXML private AnchorPane loginForm11;
+    @FXML private PasswordField np_newpass;
+    @FXML private PasswordField np_confirmpass;
+    @FXML private Hyperlink forgot_pass;
+    @FXML private Button fp_proceedBtn;
+    @FXML private Button fp_back;
+    @FXML private Button np_changepassBtn;
+    @FXML private Button np_back;
+    @FXML private AnchorPane signupForm;
+    @FXML private Button signupBtn;
 
     private Connection connect;
     private PreparedStatement prepare;
@@ -71,35 +71,24 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void loadQuestionList() {
-        List<String> listQ = new ArrayList<>();
-        for (String data : questionList) {
-            listQ.add(data);
-        }
-        ObservableList<String> listData = FXCollections.observableArrayList(listQ);
+        ObservableList<String> listData = FXCollections.observableArrayList(questionList);
         Rquestion.setItems(listData);
+    }
+
+    public void loadForgotQuestionList() {
+        ObservableList<String> listData = FXCollections.observableArrayList(questionList);
+        fp_question.setItems(listData);
     }
 
     @FXML
     public void login(ActionEvent event) {
         if (username.getText().isEmpty() || pass.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill in both username and password!");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Please fill in both username and password!");
             return;
         }
+        
 
         connect = database.connectDB();
-        if (connect == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Database Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Failed to connect to database! Please check DB settings.");
-            alert.showAndWait();
-            return;
-        }
-
         String query = "SELECT * FROM EMPLOYEE WHERE userName = ? AND password = ?";
 
         try {
@@ -109,53 +98,48 @@ public class FXMLDocumentController implements Initializable {
             result = prepare.executeQuery();
 
             if (result.next()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Login Successful");
-                alert.setHeaderText(null);
-                alert.setContentText("Welcome, " + username.getText() + "!");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.INFORMATION, "Welcome, " + username.getText() + "!");
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("mainForm.fxml"));
+                Parent root = loader.load();
+
+                mainFormController controller = loader.getController();
+                controller.setUsername(username.getText());
+
+                Stage stage = new Stage();
+                stage.setTitle("Agriculture Shop Management");
+                stage.setMinWidth(1100);
+                stage.setMinHeight(600);
+                stage.setScene(new Scene(root));
+                stage.show();
+
+                // Optionally comment this out for debugging:
+                loginBtn.getScene().getWindow().hide();
 
                 username.setText("");
                 pass.setText("");
-
-                // TODO: Navigate to dashboard
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Login Failed");
-                alert.setHeaderText(null);
-                alert.setContentText("Incorrect username or password!");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Incorrect username or password!");
             }
-
-            connect.close();
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error: " + e.getMessage());
+        } finally {
+            try { if(result != null) result.close(); } catch(Exception e) {}
+            try { if(prepare != null) prepare.close(); } catch(Exception e) {}
+            try { if(connect != null) connect.close(); } catch(Exception e) {}
         }
     }
 
     @FXML
     public void signup(ActionEvent event) {
-        if (Ruser.getText().isEmpty() || Rpass.getText().isEmpty()
-                || Rquestion.getValue() == null || Ranswer.getText().isEmpty()) {
-
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all required fields!");
-            alert.showAndWait();
+        if (Ruser.getText().isEmpty() || Rpass.getText().isEmpty() || 
+            Rquestion.getValue() == null || Ranswer.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Please fill all required fields!");
             return;
         }
 
         connect = database.connectDB();
-        if (connect == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Database Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Failed to connect to database! Please check DB settings.");
-            alert.showAndWait();
-            return;
-        }
-
         String regData = "INSERT INTO EMPLOYEE (userName, password, question, answer, date) VALUES (?, ?, ?, ?, ?)";
 
         try {
@@ -165,17 +149,9 @@ public class FXMLDocumentController implements Initializable {
             result = prepare.executeQuery();
 
             if (result.next()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Username already exists! Please choose another username.");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Username already exists!");
             } else if (Rpass.getText().length() < 8) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Password must be at least 8 characters long!");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Password must be at least 8 characters!");
             } else {
                 prepare = connect.prepareStatement(regData);
                 prepare.setString(1, Ruser.getText());
@@ -189,11 +165,7 @@ public class FXMLDocumentController implements Initializable {
 
                 prepare.executeUpdate();
 
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully registered account!");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.INFORMATION, "Account registered successfully!");
 
                 Ruser.setText("");
                 Rpass.setText("");
@@ -210,10 +182,13 @@ public class FXMLDocumentController implements Initializable {
                 });
                 slider.play();
             }
-
-            connect.close();
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error: " + e.getMessage());
+        } finally {
+            try { if(result != null) result.close(); } catch(Exception e) {}
+            try { if(prepare != null) prepare.close(); } catch(Exception e) {}
+            try { if(connect != null) connect.close(); } catch(Exception e) {}
         }
     }
 
@@ -236,7 +211,107 @@ public class FXMLDocumentController implements Initializable {
                 side_createBtn.setVisible(true);
             });
         }
-
         slider.play();
+    }
+
+    @FXML
+    public void forgotPassword() {
+        fp_question_form.setVisible(true);
+        loginForm.setVisible(false);
+        loadForgotQuestionList();
+    }
+
+    @FXML
+    public void backToLoginForm() {
+        fp_question_form.setVisible(false);
+        loginForm.setVisible(true);
+    }
+
+    @FXML
+    public void proceedToChangePassword() {
+        if (fp_question.getValue() == null || fp_answer.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Please answer the security question.");
+            return;
+        }
+
+        connect = database.connectDB();
+        String query = "SELECT * FROM EMPLOYEE WHERE question = ? AND answer = ?";
+
+        try {
+            prepare = connect.prepareStatement(query);
+            prepare.setString(1, fp_question.getValue());
+            prepare.setString(2, fp_answer.getText());
+
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                fp_question_form.setVisible(false);
+                loginForm11.setVisible(true);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Incorrect question or answer.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error: " + e.getMessage());
+        } finally {
+            try { if(result != null) result.close(); } catch(Exception e) {}
+            try { if(prepare != null) prepare.close(); } catch(Exception e) {}
+            try { if(connect != null) connect.close(); } catch(Exception e) {}
+        }
+    }
+
+    @FXML
+    public void backToQuestionForm() {
+        loginForm11.setVisible(false);
+        fp_question_form.setVisible(true);
+    }
+
+    @FXML
+    public void changePassword() {
+        if (np_newpass.getText().isEmpty() || np_confirmpass.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Please fill all password fields.");
+            return;
+        }
+
+        if (!np_newpass.getText().equals(np_confirmpass.getText())) {
+            showAlert(Alert.AlertType.ERROR, "Passwords do not match.");
+            return;
+        }
+
+        try {
+            String update = "UPDATE EMPLOYEE SET password = ? WHERE question = ? AND answer = ?";
+            connect = database.connectDB();
+            prepare = connect.prepareStatement(update);
+            prepare.setString(1, np_newpass.getText());
+            prepare.setString(2, fp_question.getValue());
+            prepare.setString(3, fp_answer.getText());
+
+            int rows = prepare.executeUpdate();
+            if (rows > 0) {
+                showAlert(Alert.AlertType.INFORMATION, "Password updated successfully!");
+                loginForm11.setVisible(false);
+                loginForm.setVisible(true);
+                np_newpass.setText("");
+                np_confirmpass.setText("");
+                fp_question.getSelectionModel().clearSelection();
+                fp_answer.setText("");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Failed to update password.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error: " + e.getMessage());
+        } finally {
+            try { if(prepare != null) prepare.close(); } catch(Exception e) {}
+            try { if(connect != null) connect.close(); } catch(Exception e) {}
+        }
+    }
+
+    private void showAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Message");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
