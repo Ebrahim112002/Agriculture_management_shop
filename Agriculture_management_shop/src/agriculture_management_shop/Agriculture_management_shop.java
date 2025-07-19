@@ -15,27 +15,21 @@ import javafx.stage.Stage;
  * @author LENOVO
  */
 public class Agriculture_management_shop extends Application {
-    
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/agriculture_management_shop/FXMLDocument.fxml"));
+        Parent root = loader.load();
+
         Scene scene = new Scene(root);
-        
         stage.setTitle("Agriculture shop");
         stage.setMinHeight(450);
         stage.setMinWidth(650);
-        
-        
         stage.setScene(scene);
         stage.show();
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
     }
-    
 }
+

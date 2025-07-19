@@ -1,88 +1,152 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 /* 
-    Created on : 03 10, 23, 5:40:14 PM
-    Author     : WINDOWS 10
+    Agriculture Shop Theme
+    Light Green to Dark Green Gradient
+    Updated: 07 19, 25
 */
 
-.header{
-    -fx-background-color: linear-gradient(to bottom right, #098c53, #246861);
+.header {
+    -fx-background-color: linear-gradient(to bottom right, #3E8E41, #A8E063, #F5FCCD);
+
     -fx-border-color: #fff;
     -fx-border-width: 0 0 .8px 0;
 }
 
-.nav-form{
-    -fx-background-color: linear-gradient(to bottom right, #0f6789, #286155);
+.nav-form {
+    -fx-background-color: linear-gradient(to bottom right, #4CAF50, #2E7D32);
 }
 
-.nav-btn{
+.nav-btn {
     -fx-background-color: transparent;
     -fx-border-color: #fff;
     -fx-border-width: .4px;
     -fx-cursor: hand;
     -fx-text-fill: #fff;
     -fx-font-size: 14px;
+    -fx-border-radius: 4px;
 }
-.nav-btn:hover{
-    -fx-background-color: #fff;
-    -fx-text-fill: #000;
+.nav-btn:hover {
+    -fx-background-color: #E8F5E9;
+    -fx-text-fill: #2E7D32;
+    -fx-border-color: #2E7D32;
 }
 
-.logout{
-    -fx-background-color: #106abf;
+.logout {
+    -fx-background-color: #F44336;
     -fx-padding: 5px;
     -fx-cursor: hand;
     -fx-background-radius: 50px;
+    -fx-text-fill: white;
 }
-.logout:hover{
-    -fx-background-color: #a71931;
-}
-
-.shadow{
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5,0,0,0);
+.logout:hover {
+    -fx-background-color: #D32F2F;
 }
 
-.white-bg{
+.shadow {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 6, 0, 0, 1);
+}
+
+.white-bg {
     -fx-background-color: #fff;
-}
-
-.radius{
     -fx-background-radius: 8px;
 }
 
-.transparent{
+.radius {
+    -fx-background-radius: 8px;
+}
+
+.transparent {
     -fx-background-color: transparent;
 }
 
-.table-view{
+.table-view {
     -fx-background-color: transparent;
     -fx-padding: 0;
-    -fx-border-color: linear-gradient(to bottom right, #0f6789, #286155);
+    -fx-border-color: linear-gradient(to bottom right, #66BB6A, #43A047);
     -fx-border-radius: 5px;
     -fx-border-width: 1.5px;
 }
-.table-view .column-header-background{
-    -fx-background-color: linear-gradient(to bottom right, #0f6789, #286155);
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom right, #66BB6A, #43A047);
     -fx-background-radius: 5px 5px 0 0;
     -fx-background-insets: 0 0 0 0;
 }
-.table-view .column-header, .filter{
+.table-view .column-header, .filter {
     -fx-background-color: transparent;
     -fx-size: 40px;
 }
-.table-view .column-header .label{
+.table-view .column-header .label {
     -fx-text-fill: #fff;
+    -fx-font-weight: bold;
 }
 
-.btn{
-    -fx-background-color: linear-gradient(to bottom right, #098c53, #246861); 
+.btn {
+    -fx-background-color: linear-gradient(to bottom right, #4CAF50, #2E7D32);
     -fx-cursor: hand;
     -fx-text-fill: #fff;
     -fx-font-size: 14px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 1);
 }
-.btn:hover{
-    -fx-background-color: linear-gradient(to bottom right, #0fb565, #399a8f); 
+.btn:hover {
+    -fx-background-color: linear-gradient(to bottom right, #66BB6A, #388E3C);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 6, 0, 0, 2);
+}
+
+/* Additional Agriculture-themed styles */
+.leaf-icon {
+    -fx-fill: #4CAF50;
+}
+
+.soil-bg {
+    -fx-background-color: #5D4037;
+}
+
+.success-bg {
+    -fx-background-color: #C8E6C9;
+}
+
+.warning-bg {
+    -fx-background-color: #FFF9C4;
+}
+
+/* Text styles */
+.agriculture-text {
+    -fx-text-fill: #2E7D32;
+    -fx-font-weight: bold;
+}
+
+.light-text {
+    -fx-text-fill: #E8F5E9;
+}
+
+/* Card styles */
+.product-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 2);
+    -fx-border-color: #C8E6C9;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+/* Form styles */
+.form-pane {
+    -fx-background-color: #F1F8E9;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 6, 0, 0, 1);
+}
+
+/* Text field styles */
+.text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #A5D6A7;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 6px 10px;
+}
+.text-field:focused {
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 1.5px;
 }
