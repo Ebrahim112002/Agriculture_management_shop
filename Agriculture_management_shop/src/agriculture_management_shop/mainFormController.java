@@ -30,14 +30,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -45,53 +42,80 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.Pair;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.view.JasperViewer;
+import java.awt.Desktop;
+import java.io.PrintWriter;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class mainFormController implements Initializable {
     
-    // UI Components
-    @FXML private AnchorPane main_form;
+    @FXML
+    private AnchorPane main_form;
+
     @FXML
     private Label username;
-    @FXML private Button dashboard_btn, inventory_btn, menu_btn, customers_btn, logout_btn;
-    @FXML private AnchorPane inventory_form, menu_form, dashboard_form, customers_form;
+
+    @FXML
+    private Button dashboard_btn, inventory_btn, menu_btn, customers_btn, logout_btn, daily_reports;
+
+    @FXML
+    private AnchorPane inventory_form, menu_form, dashboard_form, customers_form;
     
-    // Inventory components
-    @FXML private TableView<productData> inventory_tableView;
-    @FXML private TableColumn<productData, String> inventory_col_productID, inventory_col_productName, 
+    @FXML
+    private TableView<productData> inventory_tableView;
+
+    @FXML
+    private TableColumn<productData, String> inventory_col_productID, inventory_col_productName, 
             inventory_col_type, inventory_col_stock, inventory_col_price, inventory_col_status, inventory_col_date;
-    @FXML private ImageView inventory_imageView;
-    @FXML private Button inventory_importBtn, inventory_addBtn, inventory_updateBtn, inventory_clearBtn, inventory_deleteBtn;
-    @FXML private TextField inventory_productID, inventory_productName, inventory_stock, inventory_price;
-    @FXML private ComboBox<String> inventory_status, inventory_type;
-    
-    // Menu components
-    @FXML private ScrollPane menu_scrollPane;
-    @FXML private GridPane menu_gridPane;
-    @FXML private TableView<productData> menu_tableView;
-    @FXML private TableColumn<productData, String> menu_col_productName, menu_col_quantity, menu_col_price;
-    @FXML private Label menu_total, menu_change;
-    @FXML private TextField menu_amount;
-    @FXML private Button menu_payBtn, menu_removeBtn, menu_receiptBtn;
-    
-    // Customers components
-    @FXML private TableView<customersData> customers_tableView;
-    @FXML private TableColumn<customersData, String> customers_col_customerID, customers_col_total, 
+
+    @FXML
+    private ImageView inventory_imageView;
+
+    @FXML
+    private Button inventory_importBtn, inventory_addBtn, inventory_updateBtn, inventory_clearBtn, inventory_deleteBtn;
+
+    @FXML
+    private TextField inventory_productID, inventory_productName, inventory_stock, inventory_price;
+
+    @FXML
+    private ComboBox<String> inventory_status, inventory_type;
+
+    @FXML
+    private ScrollPane menu_scrollPane;
+
+    @FXML
+    private GridPane menu_gridPane;
+
+    @FXML
+    private TableView<productData> menu_tableView;
+
+    @FXML
+    private TableColumn<productData, String> menu_col_productName, menu_col_quantity, menu_col_price;
+
+    @FXML
+    private Label menu_total, menu_change;
+
+    @FXML
+    private TextField menu_amount;
+
+    @FXML
+    private Button menu_payBtn, menu_removeBtn, menu_receiptBtn;
+
+    @FXML
+    private TableView<customersData> customers_tableView;
+
+    @FXML
+    private TableColumn<customersData, String> customers_col_customerID, customers_col_total, 
             customers_col_date, customers_col_cashier;
-    
-    // Dashboard components
-    @FXML private Label dashboard_NC, dashboard_TI, dashboard_TotalI, dashboard_NSP;
-    @FXML private AreaChart<?, ?> dashboard_incomeChart;
-    @FXML private BarChart<?, ?> dashboard_CustomerChart;
-    
-    // Database and other variables
+
+    @FXML
+    private Label dashboard_NC, dashboard_TI, dashboard_TotalI, dashboard_NSP;
+
+    @FXML
+    private AreaChart<?, ?> dashboard_incomeChart;
+
+    @FXML
+    private BarChart<?, ?> dashboard_CustomerChart;
+
     private Connection connect;
     private PreparedStatement prepare;
     private Statement statement;
@@ -109,12 +133,10 @@ public class mainFormController implements Initializable {
     private double amount;
     private double change;
     
-    // Initialize the controller
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         displayUsername();
         
-        // Dashboard initialization
         dashboardDisplayNC();
         dashboardDisplayTI();
         dashboardTotalI();
@@ -122,21 +144,17 @@ public class mainFormController implements Initializable {
         dashboardIncomeChart();
         dashboardCustomerChart();
         
-        // Inventory initialization
         inventoryTypeList();
         inventoryStatusList();
         inventoryShowData();
         
-        // Menu initialization
         menuDisplayCard();
         menuDisplayTotal();
         menuShowOrderData();
         
-        // Customers initialization
         customersShowData();
     }
     
-    // Dashboard methods
     public void dashboardDisplayNC() {
         String sql = "SELECT COUNT(id) FROM receipt";
         connect = database.connectDB();
@@ -154,7 +172,7 @@ public class mainFormController implements Initializable {
     }
     
     public void dashboardDisplayTI() {
-        String sql = "SELECT SUM(total) FROM receipt WHERE date = CURRENT_DATE()";
+        String sql = "SELECT SUM(total) FROM receipt WHERE date = CURRENT_DATE";
         connect = database.connectDB();
         
         try {
@@ -162,7 +180,7 @@ public class mainFormController implements Initializable {
             result = prepare.executeQuery();
             
             if (result.next()) {
-                dashboard_TI.setText("$" + result.getDouble("SUM(total)"));
+                dashboard_TI.setText("৳" + String.format("%.2f", result.getDouble("SUM(total)")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -178,7 +196,7 @@ public class mainFormController implements Initializable {
             result = prepare.executeQuery();
             
             if (result.next()) {
-                dashboard_TotalI.setText("$" + result.getFloat("SUM(total)"));
+                dashboard_TotalI.setText("৳" + String.format("%.2f", result.getDouble("SUM(total)")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,7 +259,6 @@ public class mainFormController implements Initializable {
         }
     }
     
-    // Inventory methods
     @FXML
     public void inventoryAddBtn() {
         if (validateInventoryFields()) {
@@ -448,7 +465,22 @@ public class mainFormController implements Initializable {
         inventory_imageView.setImage(image);
     }
     
-    private String[] typeList = {"Meals", "Drinks"};
+    private String[] typeList = {
+        "Meals",
+        "Drinks",
+        "Seeds",
+        "Fertilizers",
+        "Pesticides",
+        "Tools",
+        "Equipment",
+        "Animal Feed",
+        "Irrigation",
+        "Compost",
+        "Soil Enhancers",
+        "Crop Protection",
+        "Plant Pots"
+    };
+
     private String[] statusList = {"Available", "Unavailable"};
     
     public void inventoryTypeList() {
@@ -461,7 +493,6 @@ public class mainFormController implements Initializable {
         inventory_status.setItems(listData);
     }
     
-    // Menu methods
     public ObservableList<productData> menuGetData() {
         ObservableList<productData> listData = FXCollections.observableArrayList();
         String sql = "SELECT * FROM product";
@@ -588,7 +619,7 @@ public class mainFormController implements Initializable {
     
     public void menuDisplayTotal() {
         menuGetTotal();
-        menu_total.setText("$" + totalP);
+        menu_total.setText("৳" + String.format("%.2f", totalP));
     }
     
     @FXML
@@ -606,7 +637,7 @@ public class mainFormController implements Initializable {
                 showAlert(AlertType.ERROR, "Error Message", "Amount is less than total");
             } else {
                 change = (amount - totalP);
-                menu_change.setText("$" + change);
+                menu_change.setText("৳" + String.format("%.2f", change));
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Please enter a valid number");
@@ -629,7 +660,7 @@ public class mainFormController implements Initializable {
             amount = Double.parseDouble(menu_amount.getText());
             if (amount < totalP) {
                 showAlert(AlertType.ERROR, "Payment Error", 
-                    "Payment amount $" + amount + " is less than total $" + totalP);
+                    "Payment amount ৳" + String.format("%.2f", amount) + " is less than total ৳" + String.format("%.2f", totalP));
                 return;
             }
         } catch (NumberFormatException e) {
@@ -639,7 +670,7 @@ public class mainFormController implements Initializable {
 
         Optional<ButtonType> result = showAlert(AlertType.CONFIRMATION,
             "Confirm Payment",
-            "Confirm payment of $" + totalP + "?\nAmount tendered: $" + amount + "\nChange: $" + (amount - totalP));
+            "Confirm payment of ৳" + String.format("%.2f", totalP) + "?\nAmount tendered: ৳" + String.format("%.2f", amount) + "\nChange: ৳" + String.format("%.2f", (amount - totalP)));
         
         if (!result.isPresent() || result.get() != ButtonType.OK) {
             return;
@@ -679,10 +710,7 @@ public class mainFormController implements Initializable {
             conn.commit();
 
             if (deletedRows > 0) {
-                showAlert(AlertType.INFORMATION, "Payment Successful", 
-                    "Payment processed!\nTotal: $" + totalP + 
-                    "\nChange: $" + (amount - totalP));
-
+                showReceiptAfterPayment();
                 menuRestart();
                 menuShowOrderData();
             } else {
@@ -708,6 +736,57 @@ public class mainFormController implements Initializable {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void showReceiptAfterPayment() {
+        try {
+            // Create a directory if it doesn't exist
+            File dir = new File("receipts");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // Create the receipt file
+            String filename = "receipts/receipt_" + System.currentTimeMillis() + ".txt";
+            File file = new File(filename);
+
+            try (PrintWriter writer = new PrintWriter(file)) {
+                writer.println("===== Agriculture Shop Receipt =====");
+                writer.println("Date: " + new java.util.Date());
+                writer.println("Cashier: " + (data.username != null ? data.username : "System"));
+                writer.println("Customer ID: " + cID);
+                writer.println("------------------------------------");
+
+                // Get order data
+                for (productData p : menuOrderListData) {
+                    writer.println("Item: " + p.getProductName());
+                    writer.println("Qty : " + p.getQuantity());
+                    writer.println("Price: ৳" + String.format("%.2f", p.getPrice()));
+                    writer.println("------------------------------------");
+                }
+
+                writer.println("Total : ৳" + String.format("%.2f", totalP));
+                writer.println("Paid  : ৳" + String.format("%.2f", amount));
+                writer.println("Change: ৳" + String.format("%.2f", change));
+                writer.println("====================================");
+                writer.println("   Thank you for shopping with us!   ");
+            }
+
+            // Open the file using system default text viewer
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            }
+
+            // Show success message with receipt info
+            showAlert(AlertType.INFORMATION, "Payment Successful", 
+                "Payment processed!\nTotal: ৳" + String.format("%.2f", totalP) + 
+                "\nChange: ৳" + String.format("%.2f", change) + 
+                "\n\nReceipt has been generated and saved as:\n" + filename);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Payment successful but failed to generate receipt:\n" + e.getMessage());
         }
     }
 
@@ -739,32 +818,66 @@ public class mainFormController implements Initializable {
             showAlert(AlertType.ERROR, "Error Message", "Please order first");
             return;
         }
-        
-        HashMap map = new HashMap();
-        map.put("getReceipt", (cID - 1));
-        
+
         try {
-            JasperDesign jDesign = JRXmlLoader.load("C:\\Users\\WINDOWS 10\\Documents\\NetBeansProjects\\cafeShopManagementSystem\\src\\cafeshopmanagementsystem\\report.jrxml");
-            JasperReport jReport = JasperCompileManager.compileReport(jDesign);
-            JasperPrint jPrint = JasperFillManager.fillReport(jReport, map, connect);
-            
-            JasperViewer.viewReport(jPrint, false);
+            // Create a directory if it doesn't exist
+            File dir = new File("receipts");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // Create the receipt file
+            String filename = "receipts/receipt_" + System.currentTimeMillis() + ".txt";
+            File file = new File(filename);
+
+            try (PrintWriter writer = new PrintWriter(file)) {
+                writer.println("===== Agriculture Shop Receipt =====");
+                writer.println("Date: " + new java.util.Date());
+                writer.println("Cashier: " + (data.username != null ? data.username : "System"));
+                writer.println("Customer ID: " + cID);
+                writer.println("------------------------------------");
+
+                // Get order data
+                for (productData p : menuOrderListData) {
+                    writer.println("Item: " + p.getProductName());
+                    writer.println("Qty : " + p.getQuantity());
+                    writer.println("Price: ৳" + String.format("%.2f", p.getPrice()));
+                    writer.println("------------------------------------");
+                }
+
+                writer.println("Total : ৳" + String.format("%.2f", totalP));
+                writer.println("Paid  : ৳" + String.format("%.2f", amount));
+                writer.println("Change: ৳" + String.format("%.2f", change));
+                writer.println("====================================");
+                writer.println("   Thank you for shopping with us!   ");
+            }
+
+            // Open the file using system default text viewer
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(file);
+            }
+
+            // Reset menu
             menuRestart();
+            menuShowOrderData();
+
+            showAlert(AlertType.INFORMATION, "Receipt Generated", "Receipt saved as " + filename);
+
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Failed to generate receipt:\n" + e.getMessage());
         }
     }
-    
+
     public void menuRestart() {
         totalP = 0;
         change = 0;
         amount = 0;
-        menu_total.setText("$0.0");
+        menu_total.setText("৳0.0");
         menu_amount.setText("");
-        menu_change.setText("$0.0");
+        menu_change.setText("৳0.0");
     }
     
-    // Customer methods
     public void customerID() {
         String sql = "SELECT MAX(customer_id) FROM customers";
         connect = database.connectDB();
@@ -826,7 +939,6 @@ public class mainFormController implements Initializable {
         customers_tableView.setItems(customersListData);
     }
     
-    // Form navigation
     @FXML
     public void switchForm(ActionEvent event) {
         if (event.getSource() == dashboard_btn) {
@@ -837,6 +949,8 @@ public class mainFormController implements Initializable {
             showMenu();
         } else if (event.getSource() == customers_btn) {
             showCustomers();
+        } else if (event.getSource() == daily_reports) {
+            reports(event);
         }
     }
     
@@ -885,7 +999,23 @@ public class mainFormController implements Initializable {
         customersShowData();
     }
     
-    // Other methods
+    @FXML
+    private void reports(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("DailyReports.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Daily Sales Report");
+            stage.setScene(new Scene(root));
+            stage.setMinWidth(600);
+            stage.setMinHeight(400);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Failed to load Daily Reports: " + e.getMessage());
+        }
+    }
+    
     @FXML
     public void logout() {
         Optional<ButtonType> option = showAlert(AlertType.CONFIRMATION, "Confirmation", 
@@ -898,7 +1028,7 @@ public class mainFormController implements Initializable {
                 Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
-                stage.setTitle("Cafe Shop Management System");
+                stage.setTitle("Agriculture Shop Management System");
                 stage.show();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -912,7 +1042,6 @@ public class mainFormController implements Initializable {
         }
     }
     
-    // Helper methods
     private Optional<ButtonType> showAlert(AlertType type, String title, String message) {
         alert = new Alert(type);
         alert.setTitle(title);

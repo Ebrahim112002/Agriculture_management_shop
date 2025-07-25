@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" spacing="15" style="-fx-padding: 20; -fx-background-color: #FFFFFF; -fx-border-color: #4CAF50; -fx-border-width: 2; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agriculture_management_shop.DailyReportsController">
+    <Label text="Sales Report" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; -fx-background-color: linear-gradient(to right, #4CAF50, #81C784); -fx-padding: 10; -fx-background-radius: 8; -fx-alignment: center; -fx-font-family: 'Segoe UI', sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 2, 2);"/>
+    
+    <TabPane fx:id="salesTabPane" tabClosingPolicy="UNAVAILABLE">
+        <Tab text="Today's Sales">
+            <VBox spacing="10">
+                <TableView fx:id="todayTable" style="-fx-background-color: #F5F5F5; -fx-border-color: #4CAF50; -fx-border-width: 1; -fx-background-radius: 5; -fx-border-radius: 5;">
+                    <columns>
+                        <TableColumn fx:id="todayCashierColumn" prefWidth="150" text="Cashier" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="todayDateColumn" prefWidth="100" text="Date" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="todayTotalColumn" prefWidth="100" text="Total (৳)" style="-fx-alignment: CENTER-RIGHT; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                    </columns>
+                </TableView>
+                <Label fx:id="todayTotalLabel" text="Total Sales: ৳0.00" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #4CAF50; -fx-padding: 10; -fx-font-family: 'Segoe UI', sans-serif; -fx-alignment: CENTER-RIGHT;"/>
+            </VBox>
+        </Tab>
+        <Tab text="Yesterday's Sales">
+            <VBox spacing="10">
+                <TableView fx:id="yesterdayTable" style="-fx-background-color: #F5F5F5; -fx-border-color: #4CAF50; -fx-border-width: 1; -fx-background-radius: 5; -fx-border-radius: 5;">
+                    <columns>
+                        <TableColumn fx:id="yesterdayCashierColumn" prefWidth="150" text="Cashier" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="yesterdayDateColumn" prefWidth="100" text="Date" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="yesterdayTotalColumn" prefWidth="100" text="Total (৳)" style="-fx-alignment: CENTER-RIGHT; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                    </columns>
+                </TableView>
+                <Label fx:id="yesterdayTotalLabel" text="Total Sales: ৳0.00" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #4CAF50; -fx-padding: 10; -fx-font-family: 'Segoe UI', sans-serif; -fx-alignment: CENTER-RIGHT;"/>
+            </VBox>
+        </Tab>
+        <Tab text="Monthly Sales">
+            <VBox spacing="10">
+                <TableView fx:id="monthlyTable" style="-fx-background-color: #F5F5F5; -fx-border-color: #4CAF50; -fx-border-width: 1; -fx-background-radius: 5; -fx-border-radius: 5;">
+                    <columns>
+                        <TableColumn fx:id="monthlyCashierColumn" prefWidth="150" text="Cashier" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="monthlyDateColumn" prefWidth="100" text="Month" style="-fx-alignment: CENTER; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                        <TableColumn fx:id="monthlyTotalColumn" prefWidth="100" text="Total (৳)" style="-fx-alignment: CENTER-RIGHT; -fx-font-family: 'Segoe UI', sans-serif;"/>
+                    </columns>
+                </TableView>
+                <Label fx:id="monthlyTotalLabel" text="Total Sales: ৳0.00" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #4CAF50; -fx-padding: 10; -fx-font-family: 'Segoe UI', sans-serif; -fx-alignment: CENTER-RIGHT;"/>
+            </VBox>
+        </Tab>
+    </TabPane>
+    
+    <VBox spacing="5" style="-fx-padding: 10; -fx-background-color: #E8F5E9; -fx-border-color: #4CAF50; -fx-border-width: 1; -fx-border-radius: 5; -fx-background-radius: 5;">
+        <Label text="Performance Metrics" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #4CAF50; -fx-font-family: 'Segoe UI', sans-serif;"/>
+        <Label fx:id="totalSalesLabel" text="Total Sales: ৳0.00" style="-fx-font-size: 14; -fx-text-fill: #333333; -fx-font-family: 'Segoe UI', sans-serif;"/>
+        <Label fx:id="avgTransactionLabel" text="Average Transaction: ৳0.00" style="-fx-font-size: 14; -fx-text-fill: #333333; -fx-font-family: 'Segoe UI', sans-serif;"/>
+        <Label fx:id="topCashierLabel" text="Top Cashier: None" style="-fx-font-size: 14; -fx-text-fill: #333333; -fx-font-family: 'Segoe UI', sans-serif;"/>
+    </VBox>
+
+    <style>
+        .tab-pane .tab-header-area .tab-header-background {
+            -fx-background-color: #FFFFFF;
+        }
+        .tab-pane .tab {
+            -fx-background-color: #F5F5F5;
+            -fx-border-color: #4CAF50;
+            -fx-border-width: 1;
+            -fx-background-radius: 5 5 0 0;
+            -fx-border-radius: 5 5 0 0;
+        }
+        .tab-pane .tab:selected {
+            -fx-background-color: #4CAF50;
+            -fx-text-fill: #FFFFFF;
+        }
+        .tab-pane .tab .tab-label {
+            -fx-text-fill: #333333;
+            -fx-font-family: 'Segoe UI', sans-serif;
+            -fx-font-weight: bold;
+        }
+        .tab-pane .tab:selected .tab-label {
+            -fx-text-fill: #FFFFFF;
+        }
+        .table-view .column-header-background {
+            -fx-background-color: linear-gradient(to bottom, #4CAF50, #66BB6A);
+            -fx-background-radius: 5 5 0 0;
+        }
+        .table-view .column-header, .table-view .filler {
+            -fx-text-fill: #FFFFFF;
+            -fx-font-family: 'Segoe UI', sans-serif;
+            -fx-font-weight: bold;
+        }
+        .table-view .table-cell {
+            -fx-text-fill: #333333;
+            -fx-font-family: 'Segoe UI', sans-serif;
+            -fx-border-color: #E0E0E0;
+        }
+        .table-row-cell:hover {
+            -fx-background-color: #E8F5E9;
+        }
+        .table-row-cell:selected {
+            -fx-background-color: #81C784;
+            -fx-text-fill: #FFFFFF;
+        }
+    </style>
+</VBox>

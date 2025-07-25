@@ -1,0 +1,14 @@
+===== Agriculture Shop Receipt =====
+Date: Tue Jul 22 13:02:52 BDT 2025
+Cashier: Ayaan
+Customer ID: 17
+------------------------------------
+Item: Test food
+Qty : 3
+Price: $450.0
+------------------------------------
+Total : $450.0
+Paid  : $500.0
+Change: $0.0
+====================================
+   Thank you for shopping with us!   
