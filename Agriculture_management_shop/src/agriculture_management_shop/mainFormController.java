@@ -347,6 +347,7 @@ public class mainFormController implements Initializable {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                showAlert(AlertType.ERROR, "Error", "Failed to update product: " + e.getMessage());
             }
         }
     }
@@ -626,21 +627,22 @@ public class mainFormController implements Initializable {
     public void menuAmount() {
         menuGetTotal();
         if (menu_amount.getText().isEmpty() || totalP == 0) {
-            showAlert(AlertType.ERROR, "Error Message", "Invalid amount");
+            showAlert(AlertType.ERROR, "Error Message", "Please enter an amount and ensure there are items in the order");
             return;
         }
         
         try {
             amount = Double.parseDouble(menu_amount.getText());
             if (amount < totalP) {
+                showAlert(AlertType.ERROR, "Error Message", "Amount ৳" + String.format("%.2f", amount) + " is less than total ৳" + String.format("%.2f", totalP));
                 menu_amount.setText("");
-                showAlert(AlertType.ERROR, "Error Message", "Amount is less than total");
             } else {
-                change = (amount - totalP);
+                change = amount - totalP;
                 menu_change.setText("৳" + String.format("%.2f", change));
             }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error Message", "Please enter a valid number");
+            menu_amount.setText("");
         }
     }
     
@@ -663,6 +665,7 @@ public class mainFormController implements Initializable {
                     "Payment amount ৳" + String.format("%.2f", amount) + " is less than total ৳" + String.format("%.2f", totalP));
                 return;
             }
+            change = amount - totalP; // Recalculate change
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Payment Error", "Invalid payment amount");
             return;
@@ -670,7 +673,7 @@ public class mainFormController implements Initializable {
 
         Optional<ButtonType> result = showAlert(AlertType.CONFIRMATION,
             "Confirm Payment",
-            "Confirm payment of ৳" + String.format("%.2f", totalP) + "?\nAmount tendered: ৳" + String.format("%.2f", amount) + "\nChange: ৳" + String.format("%.2f", (amount - totalP)));
+            "Confirm payment of ৳" + String.format("%.2f", totalP) + "?\nAmount tendered: ৳" + String.format("%.2f", amount) + "\nChange: ৳" + String.format("%.2f", change));
         
         if (!result.isPresent() || result.get() != ButtonType.OK) {
             return;
@@ -705,18 +708,16 @@ public class mainFormController implements Initializable {
             String clearOrder = "DELETE FROM customer WHERE customer_id = ?";
             ps = conn.prepareStatement(clearOrder);
             ps.setInt(1, cID);
-            int deletedRows = ps.executeUpdate();
+            ps.executeUpdate();
 
             conn.commit();
 
-            if (deletedRows > 0) {
-                showReceiptAfterPayment();
-                menuRestart();
-                menuShowOrderData();
-            } else {
-                showAlert(AlertType.WARNING, "Payment Issue", 
-                    "Payment recorded but no orders were cleared for the customer.");
-            }
+            // Generate receipt and show single notification
+            showReceiptAfterPayment();
+
+            // Reset menu after receipt generation
+            menuRestart();
+            menuShowOrderData();
 
         } catch (SQLException e) {
             try {
@@ -778,9 +779,10 @@ public class mainFormController implements Initializable {
                 Desktop.getDesktop().open(file);
             }
 
-            // Show success message with receipt info
+            // Show single success message with receipt info
             showAlert(AlertType.INFORMATION, "Payment Successful", 
                 "Payment processed!\nTotal: ৳" + String.format("%.2f", totalP) + 
+                "\nAmount Paid: ৳" + String.format("%.2f", amount) +
                 "\nChange: ৳" + String.format("%.2f", change) + 
                 "\n\nReceipt has been generated and saved as:\n" + filename);
 
@@ -815,7 +817,20 @@ public class mainFormController implements Initializable {
     @FXML
     public void menuReceiptBtn() {
         if (totalP == 0 || menu_amount.getText().isEmpty()) {
-            showAlert(AlertType.ERROR, "Error Message", "Please order first");
+            showAlert(AlertType.ERROR, "Error Message", "Please order and enter payment amount first");
+            return;
+        }
+
+        try {
+            amount = Double.parseDouble(menu_amount.getText());
+            if (amount < totalP) {
+                showAlert(AlertType.ERROR, "Payment Error", 
+                    "Payment amount ৳" + String.format("%.2f", amount) + " is less than total ৳" + String.format("%.2f", totalP));
+                return;
+            }
+            change = amount - totalP; // Recalculate change
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error Message", "Please enter a valid payment amount");
             return;
         }
 
@@ -857,11 +872,16 @@ public class mainFormController implements Initializable {
                 Desktop.getDesktop().open(file);
             }
 
-            // Reset menu
+            // Show single success message
+            showAlert(AlertType.INFORMATION, "Receipt Generated", 
+                "Receipt generated!\nTotal: ৳" + String.format("%.2f", totalP) + 
+                "\nAmount Paid: ৳" + String.format("%.2f", amount) +
+                "\nChange: ৳" + String.format("%.2f", change) + 
+                "\n\nReceipt saved as: " + filename);
+
+            // Reset menu after receipt generation
             menuRestart();
             menuShowOrderData();
-
-            showAlert(AlertType.INFORMATION, "Receipt Generated", "Receipt saved as " + filename);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -871,11 +891,11 @@ public class mainFormController implements Initializable {
 
     public void menuRestart() {
         totalP = 0;
-        change = 0;
         amount = 0;
-        menu_total.setText("৳0.0");
+        change = 0;
+        menu_total.setText("৳0.00");
         menu_amount.setText("");
-        menu_change.setText("৳0.0");
+        menu_change.setText("৳0.00");
     }
     
     public void customerID() {

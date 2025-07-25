@@ -1,14 +1,14 @@
 ===== Agriculture Shop Receipt =====
-Date: Fri Jul 25 16:13:20 BDT 2025
-Cashier: Ayaan123456
-Customer ID: 23
+Date: Fri Jul 25 16:33:39 BDT 2025
+Cashier: Ayaan
+Customer ID: 24
 ------------------------------------
-Item: Test food
+Item: arr
 Qty : 3
 Price: ৳450.00
 ------------------------------------
 Total : ৳450.00
 Paid  : ৳500.00
-Change: ৳0.00
+Change: ৳50.00
 ====================================
    Thank you for shopping with us!   
