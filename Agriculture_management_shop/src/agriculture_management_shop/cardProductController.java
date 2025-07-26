@@ -88,6 +88,7 @@ public class cardProductController implements Initializable {
     private double totalP;
     private double pr;
 
+    @FXML
     public void addBtn() {
 
         mainFormController mForm = new mainFormController();

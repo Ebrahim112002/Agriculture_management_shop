@@ -1,0 +1,14 @@
+===== Agriculture Shop Receipt =====
+Date: Sat Jul 26 09:47:23 BDT 2025
+Cashier: Ayaan
+Customer ID: 26
+------------------------------------
+Item: jl
+Qty : 3
+Price: ৳300.00
+------------------------------------
+Total : ৳300.00
+Paid  : ৳500.00
+Change: ৳200.00
+====================================
+   Thank you for shopping with us!   

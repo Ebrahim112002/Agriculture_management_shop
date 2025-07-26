@@ -1,0 +1,14 @@
+===== Agriculture Shop Receipt =====
+Date: Fri Jul 25 16:46:09 BDT 2025
+Cashier: Ebrahim
+Customer ID: 25
+------------------------------------
+Item: arr
+Qty : 4
+Price: ৳600.00
+------------------------------------
+Total : ৳600.00
+Paid  : ৳700.00
+Change: ৳100.00
+====================================
+   Thank you for shopping with us!   
